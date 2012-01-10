@@ -1,11 +1,13 @@
-prototype of js client to openstack
+**prototype** of js client to openstack
 
 goal is to work from both node and a browser
 
-TEST:
+WARNING: THIS IS NOT PRODUCTION READY.  THE API CAN AND WILL CHANGE
 
-  node stack.js http://example.com:5000/v2.0 user password
+QUICK TEST
+----------
 
+    node stack.js http://example.com:5000/v2.0 user password
 
 Getting started on mac
 ----------------------
