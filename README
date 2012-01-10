@@ -1,3 +1,7 @@
 prototype of js client to openstack
 
 goal is to work from both node and a browser
+
+TEST:
+
+  node stack.js http://example.com:5000/v2.0 user password
