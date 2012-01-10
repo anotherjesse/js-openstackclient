@@ -5,3 +5,17 @@ goal is to work from both node and a browser
 TEST:
 
   node stack.js http://example.com:5000/v2.0 user password
+
+
+Getting started on mac
+----------------------
+
+    brew install node
+    curl http://npmjs.org/install.sh | sh
+    npm install cli
+
+NEXT STEPS:
+
+ [ ] research how does backbone does async (make a basic backbone app with server crud)
+ [ ] using keystone then "nova" is weird (js api improvements)
+ [ ] abstract http requests so it can be used from node and browsers
