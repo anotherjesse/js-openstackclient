@@ -51,8 +51,8 @@ function keystone(auth_url, username, password, tenant, callback) {
 function Nova(auth) {
   var base = auth.catalog.url_for('compute');
 
-  this.servers = function(callback) {
-    var dest = base + '/servers/detail';
+  function req(resource, master, callback) {
+    var dest = base + resource;
 
     var options = url.parse(dest);
     options.method = 'GET';
@@ -62,14 +62,18 @@ function Nova(auth) {
     http.request(options, function(res) {
       // FIXME(ja): wait for entire body to come back!
       res.on('data', function(chunk) {
-        var servers = JSON.parse(chunk)['servers'];
+        var servers = JSON.parse(chunk)[master];
         callback(servers);
       });
     }).end();
   }
 
-  this.flavors = function() {
-    console.log('flavors!')
+  this.servers = function(callback) {
+    req('/servers/detail', 'servers', callback);
+  }
+
+  this.flavors = function(callback) {
+    req('/flavors', 'flavors', callback)
   }
 }
 
@@ -81,10 +85,17 @@ cli.main(function(args, opts) {
   var password = args[2];
   var tenant = user;
 
+  // FIXME(ja): I think I would prefer an api like: (except deal with async/sync)
+  // var stack = new OpenStack(auth_url, user, password, tenant);
+  // stack.compute.servers()
+  // stack.volume.volumes()
+  // stack.identity.tenants()
+  // NOTE(ja): for async whatever backbone needs?
   keystone(auth_url, user, password, tenant, function(auth) {
     var n = new Nova(auth);
+    // FIXME(ja): what pattern do folks use for async?
     n.servers(console.log);
+    n.flavors(console.log);
   });
-
 
 });
