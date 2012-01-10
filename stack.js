@@ -73,7 +73,7 @@ function Nova(auth) {
   };
 
   this.flavors = function(callback) {
-    req('/flavors', 'flavors', callback)
+    req('/flavors', 'flavors', callback);
   };
 }
 
