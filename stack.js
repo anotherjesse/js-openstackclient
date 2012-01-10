@@ -10,14 +10,14 @@ var url = require('url');
 function keystone(auth_url, username, password, tenant, callback) {
 
   function ServiceCatalog(token) {
-    var catalog = {}
+    var catalog = {};
     token.serviceCatalog.forEach(function(service) {
-      catalog[service.type] = service
+      catalog[service.type] = service;
     });
 
     this.url_for = function(kind) {
       return catalog[kind].endpoints[0]['publicURL'];
-    }
+    };
   }
 
   var auth = {
@@ -32,7 +32,7 @@ function keystone(auth_url, username, password, tenant, callback) {
 
   var options = url.parse(auth_url + '/tokens');
   options.method = 'POST';
-  options.headers = {'Content-Type': 'application/json'}
+  options.headers = {'Content-Type': 'application/json'};
 
   var req = http.request(options, function(res) {
     // FIXME(ja): wait for entire body to come back!
@@ -40,10 +40,10 @@ function keystone(auth_url, username, password, tenant, callback) {
       var data = JSON.parse(chunk)['access'];
       var cat = new ServiceCatalog(data);
 
-      callback({'token': data.token.id, 'catalog': cat})
+      callback({'token': data.token.id, 'catalog': cat});
     });
   });
-  req.write(JSON.stringify(auth))
+  req.write(JSON.stringify(auth));
   req.end();
 }
 
@@ -57,7 +57,7 @@ function Nova(auth) {
     var options = url.parse(dest);
     options.method = 'GET';
     options.headers = {'Content-Type': 'application/json',
-                       'X-AUTH-TOKEN': auth.token}
+                       'X-AUTH-TOKEN': auth.token};
 
     http.request(options, function(res) {
       // FIXME(ja): wait for entire body to come back!
@@ -70,11 +70,11 @@ function Nova(auth) {
 
   this.servers = function(callback) {
     req('/servers/detail', 'servers', callback);
-  }
+  };
 
   this.flavors = function(callback) {
     req('/flavors', 'flavors', callback)
-  }
+  };
 }
 
 cli.parse();
