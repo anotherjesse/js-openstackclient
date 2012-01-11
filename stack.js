@@ -30,21 +30,17 @@ function keystone(auth_url, username, password, tenant, callback) {
     }
   };
 
-  var options = url.parse(auth_url + '/tokens');
-  options.method = 'POST';
-  options.headers = {'Content-Type': 'application/json'};
-
-  var req = http.request(options, function(res) {
-    // FIXME(ja): wait for entire body to come back!
-    res.on('data', function(chunk) {
-      var data = JSON.parse(chunk)['access'];
-      var cat = new ServiceCatalog(data);
-
-      callback({'token': data.token.id, 'catalog': cat});
-    });
+  $.ajax({
+    type: 'POST',
+    url: auth_url+'/tokens',
+    data: JSON.stringify(auth),
+    success: function(data) {
+      var access = data['access'];
+      var cat = new ServiceCatalog(access);
+      callback({'token': access.token.id, 'catalog': cat});
+    },
+    contentType: 'application/json'
   });
-  req.write(JSON.stringify(auth));
-  req.end();
 }
 
 
@@ -54,18 +50,16 @@ function Nova(auth) {
   function req(resource, master, callback) {
     var dest = base + resource;
 
-    var options = url.parse(dest);
-    options.method = 'GET';
-    options.headers = {'Content-Type': 'application/json',
-                       'X-AUTH-TOKEN': auth.token};
-
-    http.request(options, function(res) {
-      // FIXME(ja): wait for entire body to come back!
-      res.on('data', function(chunk) {
-        var servers = JSON.parse(chunk)[master];
-        callback(servers);
-      });
-    }).end();
+    $.ajax({
+      type: 'GET',
+      url: dest,
+      success: function(data) {
+        var result = data[master];
+        callback(result);
+      },
+      contentType: 'application/json',
+      headers: {'X-AUTH-TOKEN': auth.token}
+    });
   }
 
   this.servers = function(callback) {
@@ -94,8 +88,8 @@ cli.main(function(args, opts) {
   keystone(auth_url, user, password, tenant, function(auth) {
     var n = new Nova(auth);
     // FIXME(ja): what pattern do folks use for async?
-    n.servers(console.log);
-    n.flavors(console.log);
+    n.servers(function(x){ console.log(x); });
+    n.flavors(function(x){ console.log(x); });
   });
 
 });

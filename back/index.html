@@ -8,8 +8,30 @@
     <script src="vendor/jquery-1.6.4.js"></script>
     <script src="vendor/underscore-1.2.4.js"></script>
     <script src="vendor/backbone.js"></script>
-    <script src="vendor/backbone-localstorage.js"></script>
-    <script src="todos.js"></script>
+    <script>
+    var require=function(n) {
+      scripts = {'cli': {'parse': function(){}, 'main': function(){}}};
+      return scripts[n];
+    }
+    </script>
+    <script src="../stack.js"></script>
+    <script src="back.js"></script>
+    <script>
+    var auth_url = 'http://essex-kvm.rcb.me:5000/v2.0';
+    var user = 'jesse';
+    var password = 'golfing';
+    var tenant = user;
+    keystone(auth_url, user, password, tenant, function(auth) {
+      var n = new Nova(auth);
+      // FIXME(ja): what pattern do folks use for async?
+      // n.servers(function(x) { console.log(x) });
+      // n.flavors(function(x) { console.log(x) });
+    });
+    $(function() {
+        App.init();
+    });
+
+    </script>
   </head>
 
   <body>
